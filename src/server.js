@@ -1,8 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 
-import { connection } from "../database/database.js";
-
 import categories from "./routes/categories.routes.js";
 import customers from "./routes/customers.routes.js";
 import games from "./routes/games.routes.js";
