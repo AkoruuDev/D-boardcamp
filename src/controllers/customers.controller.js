@@ -58,5 +58,5 @@ export async function updateCustomer ( req, res ) {
 
     /* customerValidateMiddleware */
 
-    res.status(200).send(`Customer updated successfully`)
+    return res.status(200).send(`Customer updated successfully`)
 };

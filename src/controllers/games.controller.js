@@ -3,7 +3,7 @@ import { connection } from "../../database/database.js";
 export async function getGames ( req, res ) {
     const list = await connection.query(`SELECT * FROM games`);
 
-    res.send(list);
+    return res.send(list);
 };
 
 export async function postGame ( req, res ) {
@@ -27,14 +27,14 @@ export async function postGame ( req, res ) {
     const check = await connection.query(`SELECT * FROM games WHERE id = $1` [categoryId]);
 
     if(!check) {
-        res.status(400).send(`This categoryId doesn't exists`);
+        return res.status(400).send(`This categoryId doesn't exists`);
     }
 
     const verifyName = await connection.query(`SELECT ( name ) FROM games WHERE name = $1`, [name]);
 
     if (verifyName) {
-        res.status(409).send(`This game name already exists`);
+        return res.status(409).send(`This game name already exists`);
     };
 
-    res.status(201).send(`This game added successfully`);
+    return res.status(201).send(`This game added successfully`);
 };
