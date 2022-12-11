@@ -14,12 +14,12 @@ export async function postRentals ( req, res ) {
     // const returnDate = null
     // const delayFee = null
 
-    const customerExists = await connection.query(`SELECT * FROM customer WHERE id = $1`, [customerId]);
+    const customerExists = await connection.query(`SELECT * FROM customer WHERE id = $1;`, [customerId]);
     if ( !customerExists ) {
         return res.status(400).send(`Customer selected doesn't exists`);
     };
 
-    const gameExists = await connection.query(`SELECT * FROM games WHERE id = $1`, [gameId]);
+    const gameExists = await connection.query(`SELECT * FROM games WHERE id = $1;`, [gameId]);
     if ( !gameExists ) {
         return res.status(400).send(`Games selected doesn't exists`);
     };
@@ -28,7 +28,7 @@ export async function postRentals ( req, res ) {
         return res.status(400).send(`Days rented must be more than 0`);
     };
 
-    const availableGame = await connection.query(``);
+    const availableGame = await connection.query(`;`);
     if (!availableGame) {
         return res.status(400).send(`Isn't there games availables`);
     }
@@ -39,7 +39,7 @@ export async function postRentals ( req, res ) {
 export async function finishRental ( req, res ) {
     const { id } = req.params;
 
-    const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1`, [id]);
+    const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1;`, [id]);
     if ( !rental ) {
         return res.status(404).send(`Rental not found`);
     }
@@ -49,7 +49,7 @@ export async function finishRental ( req, res ) {
 
     const dateReturn = new Date();
     const dalayFee = '' // (dateReturn - rental.rentDate) * (rental.originalPrice / rental.daysRented);
-    await connection.query(`UPDATE rentals SET returnDate = $1 WHERE id = $2`, [dateReturn, id]);
+    await connection.query(`UPDATE rentals SET returnDate = $1 WHERE id = $2;`, [dateReturn, id]);
 
     return res.status(200).send(`Rental finished successfully`);
 };
@@ -57,7 +57,7 @@ export async function finishRental ( req, res ) {
 export async function deleteRental ( req, res ) {
     const { id } = req.params;
 
-    const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1`, [id]);
+    const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1;`, [id]);
     if (!rental) {
         return res.status(404).send(`Rental not found`);
     }
@@ -65,7 +65,7 @@ export async function deleteRental ( req, res ) {
         return res.status(400).send(`Rental must be finished before to delete`);
     }
 
-    await connection.query(`DELETE FROM rentals WHERE id = $1`, [id]);
+    await connection.query(`DELETE FROM rentals WHERE id = $1;`, [id]);
 
     return res.status(200).send(`Rental deleted successfully`);
 }

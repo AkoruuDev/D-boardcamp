@@ -9,7 +9,7 @@ import rentals from "./routes/rentals.routes.js";
 dotenv.config();
 const server = express();
 server.use(express.json());
-const port = process.env.PORT;
+const port = process.env.LOCAL_PORT;
 
 // routes
 server.use(categories);
