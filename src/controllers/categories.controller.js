@@ -1,9 +1,13 @@
 import { connection } from "../../database/database.js";
 
 export async function getCategories ( req, res ) {
-    const list = await connection.query(`SELECT * FROM categories;`);
+    try {
+        const { rows } = await connection.query(`SELECT * FROM categories;`);
 
-    return res.send(list);
+        return res.status(200).send(rows);
+    } catch ( err ) {
+        return res.status(500).send(err.message);
+    }
 };
 
 export async function postCategory ( req, res ) {
@@ -13,9 +17,9 @@ export async function postCategory ( req, res ) {
         return res.status(400).send(`Categoy doesn't defined`);
     }
 
-    const search = await connection.query(`SELECT category FROM categories;`);
+    const search = await connection.query(`SELECT * FROM categories WHERE name = $1;`, [name]);
 
-    if ( search ) {
+    if ( search.rows.length != 0 ) {
         return res.status(409).send(`this category already exists`);
     }
 
