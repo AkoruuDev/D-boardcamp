@@ -1,45 +1,25 @@
 import { connection } from "../../database/database.js";
 
 export async function getCustomers ( req, res ) {
-    const promise = await connection.query(`SELECT * FROM customers;`);
+    try {
+        const promise = await connection.query(`SELECT * FROM customers;`);
 
-    return res.status(201).send(promise);
+        return res.status(201).send(promise.rows);
+    } catch ( err ) {
+        return res.status(500).send(err.message);
+    }
 };
 
 export async function getCustomer ( req, res ) {
-    const { id } = req.params;
+    const rows = req.locals.rows;
 
-    const promise = await connection.query(`SELECT * FROM customers WHERE id = $1;`, [id]);
-
-    if (!promise) {
-        return res.status(404).send(`This user doesn't exists`);
-    }
-
-    return res.status(201).send(promise);
+    return res.status(201).send(rows);
 };
 
 export async function postCustomer ( req, res ) {
     const { name, phone, cpf, birthday } = req.body;
 
-    /* customerSchema = Joi.object({
-        cpf: Joi
-                .number()
-                .min(11)
-                .max(11)
-                .required(),
-        phone: Joi
-                .number()
-                .min(10)
-                .max(11)
-                .required(),
-        name: Joi
-                .string()
-                .min(1)
-                .required(),
-        birthday: Joi
-                .date()
-                .required()
-    }); 
+    /* 
     
     return res.status(400).send(error.details.map(err => err.message))
 
