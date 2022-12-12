@@ -3,13 +3,13 @@ import Joi from "joi";
 export const customerSchema = Joi.object({
     cpf: Joi
             .number()
-            .min(11)
-            .max(11)
+            .min(11111111111)
+            .max(99999999999)
             .required(),
     phone: Joi
             .number()
-            .min(10)
-            .max(11)
+            .min(1111111111)
+            .max(99999999999)
             .required(),
     name: Joi
             .string()
@@ -25,4 +25,9 @@ export const idSchema = Joi.object({
                 .number()
                 .min(1)
                 .required()
+}).options({ abortEarly: false });
+
+export const cpfSchema = Joi.object({
+        cpf: Joi
+                .number()
 }).options({ abortEarly: false });
