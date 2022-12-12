@@ -1,40 +1,31 @@
 import { connection } from "../../database/database.js";
 
 export async function getGames ( req, res ) {
-    const list = await connection.query(`SELECT * FROM games;`);
+    const { name } = req.query;
 
-    return res.send(list);
+    try{
+        if ( name ) {
+            const { rows } = await connection.query(`SELECT name.games, image.games, stockTotal.games, categoryId.games, pricePerDay.games, name.categories FROM games JOIN categories ON games.categoryId = categories.id WHERE POSITION ($1 IN games.name) = 1;`, [name]);
+
+            return res.status(400).send(rows);
+        } else {
+            const { rows } = await connection.query(`SELECT name.games, image.games, stockTotal.games, categoryId.games, pricePerDay.games, name.categories FROM games JOIN categories ON games.categoryId = categories.id;`);
+
+            return res.status(400).send(rows);
+        }
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
 };
 
 export async function postGame ( req, res ) {
-    const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
-
-    /* name: Joi
-            .string()
-            .request()
-            .min(1),
-    stockTotal: Joi
-            .number()
-            .request()
-            .value(> 0),
-    pricePerDay: Joi
-            .number()
-            .request()
-            .value(> 0) 
+    const { name, image, stockTotal, categoryId, pricePerDay } = res.locals.body;
     
-    return 400        */
+    try {
+        await connection.query(`INSERT INTO games ( name, image, stockTotal, categoryId, pricePerDay ) VALUES ($1, $2, $3, $4, $5);`, [name, image, stockTotal, categoryId, pricePerDay]); // verify
 
-    const check = await connection.query(`SELECT * FROM games WHERE id = $1;` [categoryId]);
-
-    if(!check) {
-        return res.status(400).send(`This categoryId doesn't exists`);
+        return res.status(201).send(`This game added successfully`);
+    } catch ( error ) {
+        return res.status(500).send(error.message);
     }
-
-    const verifyName = await connection.query(`SELECT ( name ) FROM games WHERE name = $1;`, [name]);
-
-    if (verifyName) {
-        return res.status(409).send(`This game name already exists`);
-    };
-
-    return res.status(201).send(`This game added successfully`);
 };

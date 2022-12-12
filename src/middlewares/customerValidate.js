@@ -19,7 +19,6 @@ export async function customerValidate ( req, res, next) {
 
         way = rows;
     } catch ( err ) {
-        console.log('deu ruim')
         return res.status(500).send(err.message);
     }
 
