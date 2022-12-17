@@ -6,15 +6,15 @@ export async function getRentals ( req, res ) {
 
     try {
         if (customerId) {
-            const { rows } = await connection.query(`SELECT customerId.rentals, gameId.rentals, daysRented.rentals, rentDate.rentals, originalPrice.rentals, returnDate.rentals, delayFee.rentals, id.customer, name.customer, id.game, name.game, categoryId.game, categoryName.game FROM rentals JOIN customer JOIN game ON (rentals.customerId = customers.id), (rentals.gameId = games.id) WHERE rentals.customerId = $1;`, [customerId]);
+            const { rows } = await connection.query(`SELECT rentals."customerId", rentals."gameId", rentals."daysRented", rentals."rentDate", rentals."originalPrice", rentals."returnDate", rentals."delayFee", customers.id, customers.name, game.id, game.name, game."categoryId", game."categoryName" FROM rentals JOIN customers JOIN game ON (rentals."customerId" = customers.id), (rentals."gameId" = games.id) WHERE rentals."customerId" = $1;`, [customerId]);
     
             return res.status(201).send(rows);
         } else if (gameId) {
-            const { rows } = await connection.query(`SELECT customerId.rentals, gameId.rentals, daysRented.rentals, rentDate.rentals, originalPrice.rentals, returnDate.rentals, delayFee.rentals, id.customer, name.customer, id.game, name.game, categoryId.game, categoryName.game FROM rentals JOIN customer JOIN game ON (rentals.customerId = customers.id), (rentals.gameId = games.id) WHERE rentals.gameId = $1;`, [gameId]);
+            const { rows } = await connection.query(`SELECT rentals."customerId", rentals."gameId", rentals."daysRented", rentals."rentDate", rentals."originalPrice", rentals."returnDate", rentals."delayFee", customers.id, customers.name, game.id, game.name, game."categoryId", game."categoryName" FROM rentals JOIN customers JOIN game ON (rentals."customerId" = customers.id), (rentals."gameId" = games.id) WHERE rentals."gameId" = $1;`, [gameId]);
     
             return res.status(201).send(rows);
         } else {
-            const { rows } = await connection.query(`SELECT customerId.rentals, gameId.rentals, daysRented.rentals, rentDate.rentals, originalPrice.rentals, returnDate.rentals, delayFee.rentals, id.customer, name.customer, id.game, name.game, categoryId.game, categoryName.game FROM rentals JOIN customer JOIN game ON (rentals.customerId = customers.id), (rentals.gameId = games.id);`);
+            const { rows } = await connection.query(`SELECT rentals."customerId", rentals."gameId", rentals."daysRented", rentals."rentDate", rentals."originalPrice", rentals."returnDate", rentals."delayFee", customers.id, customers.name, game.id, game.name, game."categoryId", game."categoryName" FROM rentals JOIN customers JOIN game ON (rentals."customerId" = customers.id), (rentals."gameId" = games.id);`);
     
             return res.status(201).send(rows);
         }
@@ -27,7 +27,7 @@ export async function postRentals ( req, res ) {
     const { customerId, gameId, daysRented, rentDate, originalPrice, returnDate, delayFee } = res.locals.body;
 
     try {
-        await connection.query(`INSERT INTO rentals (customerId, gameId, daysRented, rentDate, originalPrice, returnDate, delayFee) VALUES ($1, $2, $3, $4, $5, $6, $7)`, [customerId, gameId, daysRented, rentDate, originalPrice, returnDate, delayFee]);
+        await connection.query(`INSERT INTO rentals ("customerId", "gameId", "daysRented", "rentDate", "originalPrice", "returnDate", "delayFee") VALUES ($1, $2, $3, $4, $5, $6, $7)`, [customerId, gameId, daysRented, rentDate, originalPrice, returnDate, delayFee]);
 
         return res.status(201).send(`Customer created successfully`);
     } catch ( error ) {
@@ -50,7 +50,7 @@ export async function finishRental ( req, res ) {
     }
 
     const delayFee = (returnDate - rental.rows[0].rentDate) * (rental.rows[0].originalPrice / rental.rows[0].daysRented);
-    await connection.query(`UPDATE rentals SET returnDate = $1, delayFee = $2 WHERE id = $3;`, [returnDate, delayFee, id]);
+    await connection.query(`UPDATE rentals SET returnDate = $1, "delayFee" = $2 WHERE id = $3;`, [returnDate, delayFee, id]);
 
     return res.status(200).send(`Rental finished successfully`);
 };
